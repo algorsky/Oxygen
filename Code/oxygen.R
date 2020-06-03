@@ -1,28 +1,23 @@
+#Load Packages
 library(tidyverse)
 library(devtools)
 library(lubridate)
 
-setwd("/Users/adriannagorsky/Documents/Research/Oxygen")
+## Load the data from Github
+hypso <- read.csv('Data/tbhypo.csv', sep = ",")
+winter <- read.csv('Data/winter.csv', sep = ",")
+ice <- read.csv('Data/iceoniceoff.csv', sep = ",")
+ice<- subset(ice, lakeid == "TB")
 
-## Load the data into R 
-oxygen <- read.csv('oxygen.csv', sep = ",")
-hypso <- read.csv('tbhypo.csv', sep = ",")
-winter <- read.csv('winter.csv', sep = ",")
-ice <- read.csv('iceoniceoff.csv', sep = ",")
+#Join Hypsometry and Ice datasheets
+winteroxy<- left_join(winter, hypso, by = "depth")
+winteroxy<- left_join(winteroxy, ice, by = "year")
 
 #Convert to Dates
-oxygen$sampledate = mdy(oxygen$sampledate)
-oxygen$datefirstopen = mdy(oxygen$datefirstopen)
+winteroxy$datefirstice = mdy(winteroxy$datefirstice)
+winteroxy$sampledate = mdy(winteroxy$sampledate)
 
-#Subset winter sampling 
-#winter<- oxygen %>% 
-  #filter(sampledate < datefirstopen)
-#winter <- na.omit(winter)
-#write.table(winter, '~/Downloads/winter.csv', sep="\t")
-
-#Calculate Hypsometrically Weighted Oxygen rates
-winteroxy<- left_join(winter, hypso, by = "depth")
-
+#Calculate Hypsometrically Weighted Oxygen rates (need help in matching Timothy's protocols)
 winteroxy<- winteroxy %>%
   mutate("multipliedVol" = volume * o2)
 
@@ -30,20 +25,15 @@ winteroxy<- winteroxy %>%
   group_by(sampledate) %>%
   mutate("oxygenMass" = sum(multipliedVol/61693.5))
 
-#Subset Ice
-ice<- subset(ice, lakeid == "TB")
-ice$datefirstopen = mdy(ice$datefirstopen)
-winteroxy$datefirstopen = mdy(winteroxy$datefirstopen)
-winteroxy<- left_join(winteroxy, ice, by = "datefirstopen")
-winteroxy$datefirstice = mdy(winteroxy$datefirstice)
-
-
 #Last Days since freeze up
 winteroxy<- winteroxy %>%
-  mutate("lastdays" = datefirstice - datefirstopen)
+  mutate("lastdays" = (sampledate - datefirstice ))
 
-winteroxy$year.x <- factor(winteroxy$year.x)
-ggplot(winteroxy, aes(x = lastdays, y = winteroxy$oxygenMass)) +
-    geom_point()+
-    g
-  
+#Days since freeze-up vs. WODR
+winteroxy$year <- factor(winteroxy$year)
+ggplot(winteroxy, aes(x = lastdays, y = winteroxy$oxygenMass, color = year)) +
+    geom_point()
+
+#Example 1982 y = -0.03x - 6.05 (slightly different than Timothy's)
+year1982<- subset(winteroxy, year == 1982)
+lm(oxygenMass~lastdays, data =year1982)
