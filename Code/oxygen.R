@@ -29,11 +29,6 @@ winteroxy<- winteroxy %>%
 winteroxy<- winteroxy %>%
   mutate("lastdays" = (sampledate - datefirstice ))
 
-#Days since freeze-up vs. WODR
-winteroxy$year <- factor(winteroxy$year)
-ggplot(winteroxy, aes(x = lastdays, y = winteroxy$oxygenMass, color = year)) +
-    geom_point()
-
 #Example 1982 y = -0.03x - 6.05 (slightly different than Timothy's)
 year1982<- subset(winteroxy, year == 1982)
 lm(oxygenMass~lastdays, data =year1982)
