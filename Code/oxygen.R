@@ -33,7 +33,7 @@ winteroxy<- winteroxy %>%
 thesis<- winteroxy%>%
   filter(year >1981, year <1992)
 
-#Average Mimicing Table 10b
+#Average Mimicking Table 10b
 wholelake<- thesis%>%
   group_by(lakeid.x)%>%
   summarise(Mean = mean(oxygenMass),
