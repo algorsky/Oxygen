@@ -29,6 +29,18 @@ winteroxy<- winteroxy %>%
 winteroxy<- winteroxy %>%
   mutate("lastdays" = (sampledate - datefirstice ))
 
+#Tim's subset
+thesis<- winteroxy%>%
+  filter(year >1981, year <1992)
+
+#Average Mimicing Table 10b
+wholelake<- thesis%>%
+  group_by(lakeid.x)%>%
+  summarise(Mean = mean(oxygenMass),
+            sd = sd(oxygenMass),
+            min = min(oxygenMass),
+            max = max(oxygenMass))
+
 #Example 1982 y = -0.03x - 6.05 (slightly different than Timothy's)
 year1982<- subset(winteroxy, year == 1982)
 lm(oxygenMass~lastdays, data =year1982)
