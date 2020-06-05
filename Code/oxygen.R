@@ -9,6 +9,9 @@ winter <- read.csv('Data/winter.csv', sep = ",")
 ice <- read.csv('Data/iceoniceoff.csv', sep = ",")
 ice<- subset(ice, lakeid == "TB")
 
+#Add a Year to Ice before Joining it to winter oxygen
+ice$year <- ice$year + 1
+
 #Join Hypsometry and Ice datasheets
 winteroxy<- left_join(winter, hypso, by = "depth")
 winteroxy<- left_join(winteroxy, ice, by = "year")
@@ -18,6 +21,7 @@ winteroxy$datefirstice = mdy(winteroxy$datefirstice)
 winteroxy$sampledate = mdy(winteroxy$sampledate)
 
 #Calculate Hypsometrically Weighted Oxygen rates (need help in matching Timothy's protocols)
+#Do I do anything with depth 8m? How to compensate for Ice thickness and change in lake volume?
 winteroxy<- winteroxy %>%
   mutate("multipliedVol" = volume * o2)
 
@@ -41,6 +45,6 @@ wholelake<- thesis%>%
             min = min(oxygenMass),
             max = max(oxygenMass))
 
-#Example 1982 y = -0.03x - 6.05 (slightly different than Timothy's)
+#Example 1982 (slightly different than Timothy's)
 year1982<- subset(winteroxy, year == 1982)
-lm(oxygenMass~lastdays, data =year1982)
+summary(lm(oxygenMass~lastdays, data =year1982))
