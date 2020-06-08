@@ -13,7 +13,7 @@ ice = read_csv('Data/iceoniceoff.csv') %>% filter(lakeid == 'TB')
 hypso <- read.csv('Data/tbhypo.csv', sep = ",")
 winter <- read.csv('Data/winter.csv', sep = ",")
 ice <- read.csv('Data/iceoniceoff.csv', sep = ",")
-ice<- subset(ice, lakeid == "TB")
+ice <- subset(ice, lakeid == "TB")
 
 #Add a Year to Ice before Joining it to winter oxygen
 ice$year <- ice$year + 1
@@ -63,6 +63,11 @@ winteroxy.group <- left_join(winter, hypso, by = "depth") %>%
   ungroup() %>% 
   mutate(lastdays = as.numeric(sampledate - datefirstice))
 str(winteroxy.group) # HD: Always good to look at your dataframe structure to make sure it did what you wanted
+
+# Plot regressions
+ggplot(winteroxy.group) + geom_point(aes(x = lastdays, y = oxygenMass)) +
+  geom_smooth(aes(x = lastdays, y = oxygenMass), method = lm) +
+  facet_wrap(~year)
 
 # HD: How to handle multiple regressions at once
 library(broom)
