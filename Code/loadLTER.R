@@ -27,10 +27,8 @@ str(dt2) # Always check structure to make sure classes are correct
 #   "flagfrlight"))
 
 
-
 # Filter for northern lakes
 dt2 = dt2 %>% filter(lakeid %in% c('AL','CB','CR','SP','TB','TR','BM')) 
-
 
 # Check for duplicate sampling of oxygen (first filter NAs, then group by lake/date/depth)
 dt2 %>% 
@@ -52,6 +50,7 @@ dt3 = dt2 %>% filter(rep == 1)
 dt3 %>% 
   group_by(lakeid, sampledate, depth) %>% 
   filter(n()>1)
+
 # Look, we have about 11 duplicates. Let's remove those from our main dataset 
 otherDuplicates = dt3 %>% 
   group_by(lakeid, sampledate, depth) %>% 
