@@ -1,3 +1,7 @@
+library(tidyverse)
+library(lubridate)
+library(zoo)
+
 # Package ID: knb-lter-ntl.29.27 Cataloging System:https://pasta.edirepository.org.
 # Data set title: North Temperate Lakes LTER: Physical Limnology of Primary Study Lakes 1981 - current.
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-ntl/29/27/03e232a1b362900e0f059859abe8eb97" 
@@ -38,7 +42,7 @@ dt2 %>%
 
 # You can see that most are the same except for the SP 2003-05-14 sample. Hmmmm
 # Lets take a look at the whole profile 
-dt3 %>% 
+dt2 %>% 
   filter(!is.na(o2)) %>% 
   filter(sampledate == '2003-05-14', lakeid == 'SP')
 # Ok, so the 2nd rep here looks wrong to me. Because of this, I would just filter out all replicates, 
@@ -104,7 +108,7 @@ newProfiles = remainingNAs %>% group_by(lakeid, sampledate) %>%
   mutate(o2 = na.approx(o2, maxgap = 2, rule = 2)) # Look up how to use this function!!!! Especially the 'rule'
 
 # Ok, so let's filter out those problems profiles for now (summer and winter), and add this fixed winter ones back in
-dt7 = dt6 %>% anti_join(dt7) %>% 
+dt7 = dt6 %>% anti_join(remainingNAs) %>% 
   bind_rows(newProfiles) %>% 
   arrange(lakeid, sampledate, depth)
 
