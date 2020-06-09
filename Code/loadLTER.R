@@ -87,25 +87,25 @@ maxDepths = dt5 %>% group_by(lakeid, depth) %>% mutate(o2 = as.logical(o2)) %>%
 dt6 = dt5 %>% anti_join(maxDepths)
 
 # Let's see what NAs we're STILL dealing with. 116 damn profiles. At this point I look at the date closely to decide what to do. 
-dt7 = dt6 %>% group_by(lakeid, sampledate) %>%  
+remainingNAs = dt6 %>% group_by(lakeid, sampledate) %>%  
   filter(any(is.na(o2)))
-View(dt7)
+View(remainingNAs)
 
 # Let's see which of these profiles is in the winter. So at this point, since that's your focus. 
-View(dt7 %>% filter(month(sampledate) == 12 | month(sampledate) <= 3))
+View(remainingNAs %>% filter(month(sampledate) == 12 | month(sampledate) <= 3))
 # There are 22 profiles in winter. Most are just missing the max depth. Only 
 # 2005-03-31 TB is weird (gotta garbage that one. ) 
 
 # let's just interpolate the winter profiles and move on 
 library(zoo)
-newProfiles = dt7 %>% group_by(lakeid, sampledate) %>%  
+newProfiles = remainingNAs %>% group_by(lakeid, sampledate) %>%  
   filter(any(is.na(o2))) %>% 
   filter(month(sampledate) == 12 | month(sampledate) <= 3) %>% 
   filter(!(lakeid == 'TB' & sampledate == '2005-03-31')) %>%  # get rid of garbage profile
   mutate(o2 = na.approx(o2, maxgap = 2, rule = 2)) # Look up how to use this function!!!! Especially the 'rule'
 
 # Ok, so let's filter out those problems profiles for now (summer and winter), and add this fixed winter ones back in
-dt8 = dt6 %>% anti_join(dt7) %>% 
+dt7 = dt6 %>% anti_join(dt7) %>% 
   bind_rows(newProfiles) %>% 
   arrange(lakeid, sampledate, depth)
 
