@@ -111,5 +111,5 @@ newProfiles = remainingNAs %>% group_by(lakeid, sampledate) %>%
 dt7 = dt6 %>% anti_join(remainingNAs) %>% 
   bind_rows(newProfiles) %>% 
   arrange(lakeid, sampledate, depth)
-
+write.csv(dt7,"/Users/adriannagorsky/Documents/Research/Oxygen/Oxygen/Data/o2_data_cleaned.csv", row.names = FALSE)
 # THE END! 
