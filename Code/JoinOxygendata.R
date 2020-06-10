@@ -22,9 +22,14 @@ oxygenjoin <- left_join(oxygen, hypo, by = c("lakeid" = "lakeid", "depth" = "dep
   mutate(hydroyear = 
            as.Date(ifelse(month(sampledate)<=10, sampledate, sampledate+years(1)),origin = "1970-01-01")) 
 
-#Work with just Winter dataset
+#Work with just Winter Dataset
 winteroxy<- oxygenjoin %>%
-  filter(hydroyear >= datefirstice | hydroyear <= datefirstopen) %>%
+  filter(sampledate >= datefirstice | sampledate <= datefirstopen) %>%
 #Calculate Hypsometrically Weighted o2 rates
-  mutate("multipliedVol" = volume * o2) 
-
+  mutate(multipliedVol = volume * o2) %>%
+  group_by(lakeid, sampledate) %>%
+  mutate(lakevolume = sum(volume))%>%
+  mutate(oxygenMass = sum(multipliedVol/(sum(volume)))) %>% 
+  ungroup() %>% 
+  mutate(lastdays = (sampledate - datefirstice))
+str(winteroxy.group)
