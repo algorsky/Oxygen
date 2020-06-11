@@ -72,7 +72,7 @@ ggplot(winteroxy.group) + geom_point(aes(x = lastdays, y = oxygenMass)) +
 # HD: How to handle multiple regressions at once
 library(broom)
 options(scipen = 999) #HD: how to turn scientific notation off
-winteroxy.group %>% 
+regressionoxy<-winteroxy.group %>% 
   nest(-year) %>% 
   mutate(
     fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
