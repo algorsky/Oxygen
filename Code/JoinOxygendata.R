@@ -8,6 +8,9 @@ hypo <- read_csv('Data/hypso.csv')
 str(hypo)
 hypo<- hypo %>% select(c(lakeid, depth, volume))
 ice <- read_csv('Data/ice.csv')
+# Shift ice on by a year
+ice <- ice %>%
+  mutate(yearfirstice=lag(datefirstice))
 str(ice)
 oxygen <- read_csv('Data/o2_data_cleaned.csv')
 str(oxygen)
@@ -31,5 +34,7 @@ winteroxy<- oxygenjoin %>%
   mutate(lakevolume = sum(volume))%>%
   mutate(oxygenMass = sum(multipliedVol/(sum(volume)))) %>% 
   ungroup() %>% 
-  mutate(lastdays = (sampledate - datefirstice))
-str(winteroxy.group)
+  mutate(lastdays = (sampledate - yearfirstice))
+
+
+
