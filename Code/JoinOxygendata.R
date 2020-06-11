@@ -35,20 +35,22 @@ winteroxy<- oxygenjoin %>%
   mutate(oxygenMass = sum(multipliedVol/(sum(volume)))) %>% 
   ungroup() %>% 
   mutate(lastdays = 
-         as.numeric(ifelse(month(sampledate)==11, sampledate - datefirstice, sampledate-yearfirstice))) 
+         as.numeric(ifelse((month(sampledate)==11|month(sampledate)==12), sampledate - datefirstice, sampledate-yearfirstice))) 
 
 # Plot regressions
 winteroxy%>%
   filter(lakeid == "TB")%>%
-ggplot() + geom_point(aes(x = lastdays, y = oxygenMass)) +
+  ggplot() + geom_point(aes(x = lastdays, y = oxygenMass)) +
   geom_smooth(aes(x = lastdays, y = oxygenMass), method = lm) +
   facet_wrap(~year(hydroyear))
 
 #Multiple Regressions
 library(broom)
 options(scipen = 999) #HD: how to turn scientific notation off
+#Create a new Column with Hydro Year
 winteroxy <- winteroxy %>%
   mutate(hydro = year(hydroyear))
+#Run Multiple Regressions
 regression<- winteroxy %>% 
   filter(lakeid == "TB")%>%
   nest(-(hydro))%>% 
@@ -57,5 +59,7 @@ regression<- winteroxy %>%
     tidied = map(fit, tidy)
   ) %>% 
   unnest(tidied)
+
+
 
 
