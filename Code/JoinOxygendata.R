@@ -44,4 +44,18 @@ ggplot() + geom_point(aes(x = lastdays, y = oxygenMass)) +
   geom_smooth(aes(x = lastdays, y = oxygenMass), method = lm) +
   facet_wrap(~year(hydroyear))
 
+#Multiple Regressions
+library(broom)
+options(scipen = 999) #HD: how to turn scientific notation off
+winteroxy <- winteroxy %>%
+  mutate(hydro = year(hydroyear))
+regression<- winteroxy %>% 
+  filter(lakeid == "TB")%>%
+  nest(-(hydro))%>% 
+  mutate(
+    fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
+    tidied = map(fit, tidy)
+  ) %>% 
+  unnest(tidied)
+
 
