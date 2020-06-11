@@ -8,6 +8,7 @@ inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-ntl/29/27/03e232
 infile1 <- tempfile()
 download.file(inUrl1,infile1,method="curl")
 
+
 # This works, but can also use the code below to specify column names.
 dt2 = read_csv(infile1) 
 str(dt2) # Always check structure to make sure classes are correct
