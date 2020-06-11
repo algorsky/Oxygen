@@ -50,6 +50,7 @@ options(scipen = 999) #HD: how to turn scientific notation off
 #Create a new Column with Hydro Year
 winteroxy <- winteroxy %>%
   mutate(hydro = year(hydroyear))
+
 #Run Multiple Regressions
 regression<- winteroxy %>% 
   filter(lakeid == "TB")%>%
