@@ -74,7 +74,7 @@ dt5 = dt4 %>% filter(any(is.na(o2))) # there are 1647 groups. That's a lot. But 
 # straight away you see there are a bunch of 0.5 m depths were no oxygen is taken. Let's get rid of all depths but integers. 
 
 dt5 = dt4 %>% 
-  filter(depth %in% c(1:40)) %>% 
+  filter(depth %in% c(0:40)) %>% 
   ungroup()
 
 dt5 %>% group_by(lakeid, sampledate) %>% 
