@@ -34,7 +34,14 @@ winteroxy<- oxygenjoin %>%
   mutate(lakevolume = sum(volume))%>%
   mutate(oxygenMass = sum(multipliedVol/(sum(volume)))) %>% 
   ungroup() %>% 
-  mutate(lastdays = (sampledate - yearfirstice))
+  mutate(lastdays = 
+         as.numeric(ifelse(month(sampledate)==11, sampledate - datefirstice, sampledate-yearfirstice))) 
 
+# Plot regressions
+winteroxy%>%
+  filter(lakeid == "TB")%>%
+ggplot() + geom_point(aes(x = lastdays, y = oxygenMass)) +
+  geom_smooth(aes(x = lastdays, y = oxygenMass), method = lm) +
+  facet_wrap(~year(hydroyear))
 
 
