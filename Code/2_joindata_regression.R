@@ -34,8 +34,7 @@ winteroxy<- oxygenjoin %>%
   mutate(lakevolume = sum(volume))%>%
   mutate(oxygenMass = sum(multipliedVol/(sum(volume)))) %>% 
   ungroup() %>% 
-  mutate(lastdays = 
-         as.numeric(ifelse((month(sampledate)==11|month(sampledate)==12), sampledate - datefirstice, sampledate-yearfirstice))) 
+  mutate(lastdays = as.numeric(ifelse((month(sampledate)>= 10), sampledate - datefirstice, sampledate-yearfirstice))) 
 
 # Probably best practice to group and summarise so you're not plotting multiple of the samepoints
 # You might want to keep different columns for different reasons, but simple for now
@@ -53,7 +52,6 @@ winteroxy_grp %>%
 
 # HD: All regressions together
 winteroxy_grp %>%
-  # filter(lakeid == "TB") %>%
   ggplot(aes(x = lastdays, y = oxygenMass, color = year(hydroyear), group = year(hydroyear))) + 
   geom_point() +
   geom_smooth(method = lm, se = F, alpha = 0.1) +
@@ -62,7 +60,6 @@ winteroxy_grp %>%
 
 # HD: All regressions together, free scales
 winteroxy_grp %>%
-  # filter(lakeid == "TB") %>%
   ggplot(aes(x = lastdays, y = oxygenMass, color = year(hydroyear), group = year(hydroyear))) + 
   geom_point(alpha = 0.6) +
   geom_smooth(method = lm, se = F, alpha = 0.1) + # Turn SE off
@@ -77,7 +74,7 @@ winteroxy <- winteroxy %>%
   mutate(hydro = year(hydroyear))
 
 #Run Multiple Regressions
-regression <- winteroxy %>% 
+TBregression <- winteroxy %>% 
   filter(lakeid == "TB") %>%
   nest(-(hydro))%>% 
   mutate(
@@ -85,6 +82,7 @@ regression <- winteroxy %>%
     tidied = map(fit, tidy)
   ) %>% 
   unnest(tidied)
+
 
 
 
