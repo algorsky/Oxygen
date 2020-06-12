@@ -53,10 +53,10 @@ winteroxy_grp %>%
 
 # HD: All regressions together
 winteroxy_grp %>%
-  filter(lakeid == "TB") %>%
+  # filter(lakeid == "TB") %>%
   ggplot(aes(x = lastdays, y = oxygenMass, color = year(hydroyear), group = year(hydroyear))) + 
   geom_point() +
-  geom_smooth(method = lm, alpha = 0.1) +
+  geom_smooth(method = lm, se = F, alpha = 0.1) +
   scale_colour_viridis_c(name = 'year') +
   facet_wrap(~lakeid)
 
