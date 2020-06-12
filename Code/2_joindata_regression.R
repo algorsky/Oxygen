@@ -70,20 +70,93 @@ winteroxy_grp %>%
 library(broom)
 options(scipen = 999) #HD: how to turn scientific notation off
 #Create a new Column with Hydro Year
-winteroxy <- winteroxy %>%
+winteroxy_grp <- winteroxy_grp %>%
   mutate(hydro = year(hydroyear))
 
 #Run Multiple Regressions
-TBregression <- winteroxy %>% 
+TBregression <- winteroxy_grp %>% 
   filter(lakeid == "TB") %>%
   nest(-(hydro))%>% 
   mutate(
     fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
     tidied = map(fit, tidy)
   ) %>% 
-  unnest(tidied)
+  unnest(tidied) %>%
+  filter(term == "lastdays")%>%
+  select(hydro, estimate) %>%
+  mutate(lakeid = "TB")
+
+ALregression <- winteroxy_grp %>% 
+  filter(lakeid == "AL") %>%
+  nest(-(hydro))%>% 
+  mutate(
+    fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
+    tidied = map(fit, tidy)
+  ) %>% 
+  unnest(tidied) %>%
+  filter(term == "lastdays")%>%
+  select(hydro, estimate) %>%
+  mutate(lakeid = "AL")
 
 
+CBregression <- winteroxy_grp %>% 
+  filter(lakeid == "CB") %>%
+  nest(-(hydro))%>% 
+  mutate(
+    fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
+    tidied = map(fit, tidy)
+  ) %>% 
+  unnest(tidied) %>%
+  filter(term == "lastdays")%>%
+  select(hydro, estimate) %>%
+  mutate(lakeid = "CB")
 
+CRregression <- winteroxy_grp %>% 
+  filter(lakeid == "CR") %>%
+  nest(-(hydro))%>% 
+  mutate(
+    fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
+    tidied = map(fit, tidy)
+  ) %>% 
+  unnest(tidied) %>%
+  filter(term == "lastdays")%>%
+  select(hydro, estimate) %>%
+  mutate(lakeid = "CR")
 
+BMregression <- winteroxy_grp %>% 
+  filter(lakeid == "BM") %>%
+  nest(-(hydro))%>% 
+  mutate(
+    fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
+    tidied = map(fit, tidy)
+  ) %>% 
+  unnest(tidied) %>%
+  filter(term == "lastdays")%>%
+  select(hydro, estimate) %>%
+  mutate(lakeid = "BM")
 
+SPregression <- winteroxy_grp %>% 
+  filter(lakeid == "SP") %>%
+  nest(-(hydro))%>% 
+  mutate(
+    fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
+    tidied = map(fit, tidy)
+  ) %>% 
+  unnest(tidied) %>%
+  filter(term == "lastdays")%>%
+  select(hydro, estimate) %>%
+  mutate(lakeid = "SP")
+
+TRregression <- winteroxy_grp %>% 
+  filter(lakeid == "TR") %>%
+  nest(-(hydro))%>% 
+  mutate(
+    fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
+    tidied = map(fit, tidy)
+  ) %>% 
+  unnest(tidied) %>%
+  filter(term == "lastdays")%>%
+  select(hydro, estimate) %>%
+  mutate(lakeid = "TR")
+
+regressionOxy<- rbind(ALregression, BMregression, CRregression, CBregression, SPregression, TBregression, TRregression)
