@@ -33,8 +33,14 @@ wodr %>%
   geom_smooth(method = lm, se = F, alpha = 0.1)+
   facet_wrap(~lakeid)
 
+#potential trend in Trout Bog and Trout Lake?
+
 #With Tim's data also plotted
 wodr%>%
   ggplot(aes(x = hydro, y = estimate, shape = name, color = name))+
   geom_point()+
   facet_wrap(~lakeid)
+
+
+
+
