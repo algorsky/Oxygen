@@ -160,3 +160,5 @@ TRregression <- winteroxy_grp %>%
   mutate(lakeid = "TR")
 
 regressionOxy<- rbind(ALregression, BMregression, CRregression, CBregression, SPregression, TBregression, TRregression)
+
+write.csv(regressionOxy,"/Users/adriannagorsky/Documents/Research/Oxygen/Oxygen/Data/regressionOxy.csv", row.names = FALSE)
