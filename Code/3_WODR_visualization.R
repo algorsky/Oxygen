@@ -39,6 +39,7 @@ wodr %>%
 wodr%>%
   ggplot(aes(x = hydro, y = estimate, shape = name, color = name))+
   geom_point()+
+  geom_smooth(method = lm, se = F, alpha = 0.1)+
   facet_wrap(~lakeid)
 
 
