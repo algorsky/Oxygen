@@ -73,6 +73,17 @@ options(scipen = 999) #HD: how to turn scientific notation off
 winteroxy_grp <- winteroxy_grp %>%
   mutate(hydro = year(hydroyear))
 
+#Run Multiple Regressions (HD)
+ALLregression <- winteroxy_grp %>% 
+  nest(-(c(hydro,lakeid))) %>% 
+  mutate(
+    fit = map(data, ~ lm(oxygenMass ~ lastdays, data = .x)),
+    tidied = map(fit, tidy)
+  ) %>% 
+  unnest(tidied) %>%
+  filter(term == "lastdays")%>%
+  select(hydro, estimate) 
+
 #Run Multiple Regressions
 TBregression <- winteroxy_grp %>% 
   filter(lakeid == "TB") %>%
