@@ -52,7 +52,6 @@ ggcorrplot(dat.cor, type = "lower",
            lab = TRUE) 
 ggsave('Figures/correlationPlot_ggcorrplot.png', width = 5, height = 5)
 
-
 library(corrplot)
 png(file = "Figures/correlationPlot.png", width = 5, height = 5, units = 'in', res = 300)
   corrplot(dat.cor, method = "ellipse",type = 'upper', tl.col = 'black')
