@@ -42,6 +42,18 @@ wodr%>%
   geom_smooth(method = lm, se = F, alpha = 0.1)+
   facet_wrap(~lakeid)
 
+# Correlation Matrix Plot (must change to wide format from long)
+wodr.wide <- read_csv('Data/regressionOxy.csv') %>% 
+  pivot_wider(names_from = lakeid, values_from = estimate)
+dat.cor = round(cor(wodr.wide,use = 'complete.obs'),2)
+
+library(ggcorrplot)
+ggcorrplot(dat.cor, type = "lower",
+           lab = TRUE) 
+ggsave('Figures/correlationPlot_ggcorrplot.png', width = 5, height = 5)
 
 
-
+library(corrplot)
+png(file = "Figures/correlationPlot.png", width = 5, height = 5, units = 'in', res = 300)
+  corrplot(dat.cor, method = "ellipse",type = 'upper', tl.col = 'black')
+dev.off()
