@@ -23,26 +23,26 @@ str(dt2) # Always check structure to make sure classes are correct
 
 # Filter for northern lakes
 dt2 = dt2 %>% filter(lakeid %in% c('AL','CB','CR','SP','TB','TR','BM'))
-dt3<- dt2[c(1:8,14)]
+dt3<- dt2[c(1:8,14)] #Only keep important columns
+
 # Check for duplicate sampling of oxygen (first filter NAs, then group by lake/date/depth)
+#Also filter out -99.00 values
 data<-dt3 %>% 
   filter(!is.na(doc)) %>% 
   group_by(lakeid, sampledate, depth) %>% 
   filter(n()>1) 
-
-dt4 = dt3 %>% filter(rep == 1)
-
-# Only line 37 we filtered for NA values. Let's do that again without that filter. 
-dt4 %>% 
-  group_by(lakeid, sampledate, depth) %>% 
-  filter(n()>1)
+data<-data %>% 
+  filter(doc != -99.00) %>% 
+  group_by(lakeid, sampledate, depth)
 
 # Look, we have about 11 duplicates. Let's remove those from our main dataset 
-otherDuplicates = dt4 %>% 
+otherDuplicates = data %>% 
   group_by(lakeid, sampledate, depth) %>% 
-  filter(n()>1, is.na(doc)) 
+  filter(n()>1) 
 
-dt4 = dt3 %>% filter(rep == 1) %>% 
+orh
+
+datafull = data %>% filter(rep == 1) %>% 
   anti_join(otherDuplicates)
 
 # Ok, now let's get rid of sampledates when there is no oxygen data 
