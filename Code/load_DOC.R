@@ -28,28 +28,16 @@ dt3<- dt2[c(1:8,14)] #Only keep important columns
 # Check for duplicate sampling of oxygen (first filter NAs, then group by lake/date/depth)
 #Also filter out -99.00 values
 data<-dt3 %>% 
-  filter(!is.na(doc)) %>% 
-  group_by(lakeid, sampledate, depth) %>% 
-  filter(n()>1) 
+  filter(!is.na(doc))
 data<-data %>% 
-  filter(doc != -99.00) %>% 
-  group_by(lakeid, sampledate, depth)
+  filter(doc != -99.00)
 
-# Lots of duplicates. Take the average and then filter to onlu include rep 1
-otherDuplicates = data %>% 
-  group_by(lakeid, sampledate, depth) %>% 
-  filter(n()>1) 
+# Take the average of DOC by sampling date
+avgData <- data%>%
+  group_by(lakeid, sampledate)%>%
+  summarize(mean_DOC = mean(doc))
 
-avgDuplicate <- otherDuplicates%>%
-  group_by(sampledate)%>%
-  mutate(mean_DOC = mean(doc))%>%
-  ungroup()%>%
-  filter(rep == 1)
-
-avgData<- avgDuplicate
-
-
-write.csv(dt7,"/Users/adriannagorsky/Documents/Research/Oxygen/Oxygen/Data/doc_data_cleaned.csv", row.names = FALSE)
+write.csv(avgData,"Data/doc_data_cleaned.csv", row.names = FALSE)
 
 
 

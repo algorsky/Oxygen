@@ -8,6 +8,10 @@ library(ggplot2)
 wodr <- read_csv('Data/regressionOxy.csv')
 str(wodr)
 
+## Load DOC data
+doc <- read_csv('Data/doc_data_cleaned.csv')
+str(doc)
+
 #Add a column to distiguish from Tim's data
 wodr <- wodr%>%
   mutate(name = "AG")
@@ -50,9 +54,27 @@ dat.cor = round(cor(wodr.wide,use = 'complete.obs'),2)
 library(ggcorrplot)
 ggcorrplot(dat.cor, type = "lower",
            lab = TRUE) 
-ggsave('Figures/correlationPlot_ggcorrplot.png', width = 5, height = 5)
+#ggsave('Figures/correlationPlot_ggcorrplot.png', width = 5, height = 5)
 
 library(corrplot)
-png(file = "Figures/correlationPlot.png", width = 5, height = 5, units = 'in', res = 300)
-  corrplot(dat.cor, method = "ellipse",type = 'upper', tl.col = 'black')
+#png(file = "Figures/correlationPlot.png", width = 5, height = 5, units = 'in', res = 300)
+corrplot(dat.cor, method = "ellipse",type = 'upper', tl.col = 'black')
 dev.off()
+
+
+#Trout Bog WODR with DOC trend
+
+wodr%>%
+  filter(lakeid == "TB" & name == "AG") %>%
+  ggplot(aes(x = hydro, y = estimate, shape = name, color = name))+
+  geom_point()+
+  geom_path()
+
+doc%>%
+  filter(lakeid == "TB")%>%
+  ggplot(aes(x = sampledate, y = mean_DOC, shape = lakeid, color = lakeid))+
+  geom_point()+
+  xlab("Sample date")+
+  ylab("Dissolved Organic Carbon (mg/L)")+
+  theme_bw()
+  
