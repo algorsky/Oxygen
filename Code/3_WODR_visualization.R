@@ -73,6 +73,7 @@ wodr<-wodr%>%
   geom_point()+
   geom_path()+
   xlab("")+
+  ylab("Winter Oxygen Depletion Rate")+
   theme_bw()+
   theme(legend.position = "none")
 
