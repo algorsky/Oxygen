@@ -3,6 +3,7 @@ library(tidyverse)
 library(devtools)
 library(lubridate)
 library(ggplot2)
+library(gridExtra)
 
 ## Load the data from Github and check structure
 wodr <- read_csv('Data/regressionOxy.csv')
@@ -40,11 +41,13 @@ wodr %>%
 #potential trend in Trout Bog and Trout Lake?
 
 #With Tim's data also plotted
-wodr%>%
+wodr_facet<-wodr%>%
   ggplot(aes(x = hydro, y = estimate, shape = name, color = name))+
   geom_point()+
   geom_smooth(method = lm, se = F, alpha = 0.1)+
   facet_wrap(~lakeid)
+
+ggsave("Figures/WODRTrend.png", width = 6.5, height = 6, units = 'in', wodr_facet)
 
 # Correlation Matrix Plot (must change to wide format from long)
 wodr.wide <- read_csv('Data/regressionOxy.csv') %>% 
@@ -64,17 +67,25 @@ dev.off()
 
 #Trout Bog WODR with DOC trend
 
-wodr%>%
+wodr<-wodr%>%
   filter(lakeid == "TB" & name == "AG") %>%
   ggplot(aes(x = hydro, y = estimate, shape = name, color = name))+
   geom_point()+
-  geom_path()
+  geom_path()+
+  xlab("")+
+  theme_bw()+
+  theme(legend.position = "none")
 
-doc%>%
-  filter(lakeid == "TB")%>%
-  ggplot(aes(x = sampledate, y = mean_DOC, shape = lakeid, color = lakeid))+
-  geom_point()+
-  xlab("Sample date")+
-  ylab("Dissolved Organic Carbon (mg/L)")+
-  theme_bw()
+doc<-doc%>%
+    filter(lakeid == "TB")%>%
+    ggplot(aes(x = sampledate, y = mean_DOC, shape = lakeid, color = lakeid))+
+    geom_point()+
+  xlab("")+
+    ylab("Dissolved Organic Carbon (mg/L)")+
+    theme_bw()+
+    theme(legend.position = "none")
   
+doc<- grid.arrange(wodr, doc, ncol = 2, nrow = 1,
+             top = ("Trout Bog Trend"),
+             bottom = ("Sample Date"))
+ggsave("/Figures/WodrDoc.png", width = 10, height = 6, units = 'in', doc)
