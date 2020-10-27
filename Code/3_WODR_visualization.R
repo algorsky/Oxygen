@@ -4,6 +4,7 @@ library(devtools)
 library(lubridate)
 library(ggplot2)
 library(gridExtra)
+library(dplyr)
 
 ## Load the data from Github and check structure
 wodr <- read_csv('Data/regressionOxy.csv')
@@ -24,8 +25,8 @@ tim<- read_csv('Data/tim_oxy.csv')
 wodr <- rbind(wodr, tim)
 
 # From your regression dataframe, pull out the slopes for each year and plot distributions for each lake
-wodr %>%
-  ggplot(aes(x = estimate, fill = name))+
+
+  ggplot(data = wodr,aes(x = estimate, fill = name))+
            geom_histogram()+
   facet_wrap(~lakeid)
 
@@ -67,9 +68,11 @@ dev.off()
 
 #Trout Bog WODR with DOC trend
 
-wodr<-wodr%>%
-  filter(lakeid == "TB" & name == "AG") %>%
-  ggplot(aes(x = hydro, y = estimate, shape = name, color = name))+
+wodr_DOC<-wodr%>%
+  filter(lakeid == "TB" & name == "AG") 
+
+
+wodr_TB<-ggplot(data = wodr_DOC, aes(x = hydro, y = estimate, shape = name, color = name))+
   geom_point()+
   geom_path()+
   xlab("")+
@@ -77,16 +80,17 @@ wodr<-wodr%>%
   theme_bw()+
   theme(legend.position = "none")
 
-doc<-doc%>%
-    filter(lakeid == "TB")%>%
-    ggplot(aes(x = sampledate, y = mean_DOC, shape = lakeid, color = lakeid))+
+doc_TB<-doc%>%
+    filter(lakeid == "TB")
+
+  plot_DOC<- ggplot(data = doc_TB, aes(x = sampledate, y = mean_DOC, shape = lakeid, color = lakeid))+
     geom_point()+
   xlab("")+
     ylab("Dissolved Organic Carbon (mg/L)")+
     theme_bw()+
     theme(legend.position = "none")
   
-doc<- grid.arrange(wodr, doc, ncol = 2, nrow = 1,
+doc_grid<- grid.arrange(wodr_TB, plot_DOC, ncol = 2, nrow = 1,
              top = ("Trout Bog Trend"),
              bottom = ("Sample Date"))
 ggsave("/Figures/WodrDoc.png", width = 10, height = 6, units = 'in', doc)
