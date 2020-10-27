@@ -92,5 +92,5 @@ doc_TB<-doc%>%
   
 doc_grid<- grid.arrange(wodr_TB, plot_DOC, ncol = 2, nrow = 1,
              top = ("Trout Bog Trend"),
-             bottom = ("Sample Date"))
+             bottom = (""))
 ggsave("/Figures/WodrDoc.png", width = 10, height = 6, units = 'in', doc)
